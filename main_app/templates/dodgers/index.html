@@ -1,0 +1,20 @@
+{% extends 'base.html' %} {% block content %}
+
+<h1>Dodger List</h1>
+
+{% for dodger in dodgers %}
+<div class="card">
+  <a href="/dodgers/{{ dodger.id }}">
+    <div class="card-content">
+      <span class="card-title">{{ dodger.name }}</span>
+      <p>Position: {{ dodger.position }}</p>
+      <p>Description: {{ dodger.description }}</p>
+      {% if dodger.salary %}
+      <p>Salary: $ {{ dodger.salary }}</p>
+      {% else %}
+      <p>Salary: unknown</p>
+      {% endif %}
+    </div>
+  </a>
+</div>
+{% endfor %} {% endblock %}

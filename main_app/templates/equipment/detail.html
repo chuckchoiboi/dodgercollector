@@ -1,0 +1,16 @@
+{% extends 'base.html' %} {% block content %}
+
+<h1>Equipment Details</h1>
+
+<div class="card">
+  <div class="card-content">
+    <span class="card-title">{{ equipment.name }}</span>
+    <p>brand: {{ equipment.brand }}</p>
+  </div>
+  <div class="card-action">
+    <a href="{% url 'update_equipment' equipment.id %}">Edit</a>
+    <a href="{% url 'delete_equipment' equipment.id %}">Delete</a>
+  </div>
+</div>
+
+{% endblock %}

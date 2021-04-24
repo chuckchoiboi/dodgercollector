@@ -1,0 +1,127 @@
+{% extends 'base.html' %} {% block content %}
+
+<h1>Dodger Details</h1>
+
+<div class="row">
+  <div class="col s6">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">{{ dodger.name }}</span>
+        <p>Position: {{ dodger.position }}</p>
+        <p>Description: {{ dodger.description }}</p>
+        {% if dodger.salary %}
+        <p>Salary: {{ dodger.salary }}</p>
+        {% else %}
+        <p>Salary: Unknown</p>
+        {% endif %}
+      </div>
+      <div class="card-action">
+        <a href="{% url 'dodgers_update' dodger.id %}">Edit</a>
+        <a href="{% url 'dodgers_delete' dodger.id %}">Delete</a>
+      </div>
+    </div>
+    {% for photo in dodger.photo_set.all %}
+    <img class="responsive-img card-panel" src="{{photo.url}}" />
+    {% empty %}
+    <div class="card-panel teal-text center-align">No Photos Uploaded</div>
+    {% endfor %}
+    <!-- new code below -->
+    <form
+      action="{% url 'add_photo' dodger.id %}"
+      enctype="multipart/form-data"
+      method="POST"
+      class="card-panel"
+    >
+      {% csrf_token %}
+      <input type="file" name="photo-file" />
+      <br /><br />
+      <input type="submit" class="btn" value="Upload Photo" />
+    </form>
+  </div>
+  <div class="col s6">
+    <form action="{% url 'add_training' dodger.id %}" method="post">
+      {% csrf_token %} {{ training_form.as_p }}
+      <input type="submit" class="btn" value="Add Training" />
+    </form>
+    <br />
+    {% if dodger.trained_for_today %}
+    <div class="card-panel teal-text center-align">
+      {{dodger.name}} has done all workouts for today
+    </div>
+    {% else %}
+    <div class="card-panel red-text center-align">
+      {{dodger.name}} might need to do some workouts
+    </div>
+    {% endif %}
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Workout</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for training in dodger.training_set.all %}
+        <tr>
+          <td>{{training.date}}</td>
+          <td>{{training.get_workout_display}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr />
+<div class="row">
+  <div class="col s6">
+    <h3>{{ dodger.name }}'s Equipments</h3>
+    {% if dodger.equipments.count %} {% for equipment in dodger.equipments.all %}
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title"> A {{ equipment.brand }} {{ equipment.name }} </span>
+      </div>
+      <div class="card-action">
+        <form action="{% url 'dissoc_equipment' dodger.id equipment.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn">Remove</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <h5>No Equipments :(</h5>
+    {% endif %}
+  </div>
+  <div class="col s6">
+    <h3>Available Equipments</h3>
+    {% if equipments.count %} {% for equipment in equipments.all %}
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title"> A {{ equipment.brand }} {{ equipment.name }} </span>
+      </div>
+      <div class="card-action">
+        <form action="{% url 'assoc_equipment' dodger.id equipment.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn">Add</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <h5>{{dodger.name}} Already Has All Equipments Available</h5>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  var dateEl = document.getElementById('id_date');
+  M.Datepicker.init(dateEl, {
+    format: 'yyyy-mm-dd',
+    defaultDate: new Date(),
+    setDefaultDate: true,
+    autoClose: true,
+  });
+
+  var selectEl = document.getElementById('id_workout');
+  M.FormSelect.init(selectEl);
+</script>
+{% endblock %}
