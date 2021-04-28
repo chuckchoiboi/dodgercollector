@@ -1,4 +1,4 @@
 # dodgercollector
 Practicing Django
 
-[Link to the app](#)
+[Link to the app](https://dodgercollector.herokuapp.com/)
